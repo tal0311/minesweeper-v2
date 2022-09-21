@@ -1,0 +1,11 @@
+table {
+  margin: 0 auto;
+  width: 75vw;
+  height: 75vh;
+}
+
+tr,
+td {
+  height: 5%;
+  width: 5%;
+}
