@@ -30,10 +30,10 @@ function getCellContent(i, j) {
   return ''
 }
 function getCellClass(cell, i, j) {
-  const { isMarked, isMine } = cell
+  const { isMarked, isMine, isShown } = cell
   classStr = `cell cell-${i}-${j} ${isMarked ? 'marked' : ''} ${
     isMine ? 'mine' : ''
-  }`
+  } ${isShown ? 'isShown' : ''}`
   return classStr
 }
 
@@ -65,4 +65,39 @@ function getPosesForMines(board) {
     }
   }
   return poses
+}
+
+function countMinesAround(posI, posJ) {
+  var count = 0
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i > gBoard.length - 1) continue
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j > gBoard[0].length - 1) continue
+      if (i === posI && j === posJ) continue
+      var isMine = gBoard[i][j].isMine
+      if (isMine) count++
+    }
+  }
+
+  return count
+}
+
+function getAllNegs(posI, posJ) {
+  var negsPoses = []
+  for (var i = posI - 1; i <= posI + 1; i++) {
+    if (i < 0 || i > gBoard.length - 1) continue
+    for (var j = posJ - 1; j <= posJ + 1; j++) {
+      if (j < 0 || j > gBoard[0].length - 1) continue
+      if (i === posI && j === posJ) continue
+
+      negsPoses.push({ i, j })
+    }
+  }
+  return negsPoses
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
