@@ -1,13 +1,5 @@
 'use strict'
 
-//  cell: {
-//  minesAroundCount: 4,
-//  isShown: true,
-//  isMine: false,
-//  isMarked: true
-
-// }
-
 const MINE = '💣'
 const FLAG = '🚩'
 
@@ -20,7 +12,6 @@ var gLevel = {
 var gGame
 
 function initGame() {
-  // This is called when page loads
   gGame = {
     isOn: false,
     shownCount: 0,
@@ -38,12 +29,7 @@ function initGame() {
   gGame.poses = getPosesForMines(gBoard)
 }
 
-function setMinesNegsCount(board) {
-  // Count mines around each cell and set the cell's minesAroundCount.
-}
-
-function cellClicked(elCell, i, j) {
-  // Called when a cell (td) is clicked
+function cellClicked(i, j) {
   if (!gGame.isOn) startTimer()
   if (!gGame.isOn) return
   var cell = gBoard[i][j]
@@ -58,26 +44,18 @@ function cellClicked(elCell, i, j) {
     }
     gameOver()
   }
-  // cell.isShown = true
+  _updateCell('show-cell', i, j)
+}
 
-  if (checkGameOver()) gameOver()
-  console.log('borad with mines:', gBoard)
-  expandShown(i, j)
+function cellMarked(ev, i, j) {
+  ev.preventDefault()
+  console.log(i, j)
+  _updateCell('mark', i, j)
   renderBoard(gBoard)
 }
 
-function startTimer() {
-  gGame.isOn = true
-  setInterval(renderTime, 1000)
-}
-function renderTime() {
-  gGame.secsPassed++
-  console.log('gGame.secsPassed:', gGame.secsPassed)
-  var ElTimer = document.querySelector('.timer-container .timer')
-  ElTimer.innerText = gGame.secsPassed
-}
-
 function _updateCell(type, i, j) {
+  // debugger
   var cell = gBoard[i][j]
   switch (type) {
     case 'firstClick':
@@ -86,30 +64,67 @@ function _updateCell(type, i, j) {
       gGame.poses = getAllPoses()
       placeMines(gGame.poses)
       countNegs()
-      break
+      return
     case 'lives':
       gGame.lifeCount--
       cell.isShown = true
       break
+    case 'mark':
+      gGame.markedCount++
+      cell.isMarked = !cell.isMarked
+      break
 
     default:
+      expandShown(i, j)
+      renderBoard(gBoard)
       break
   }
-}
-
-function cellMarked(ev, elCell) {
-  ev.preventDefault()
+  checkGameOver()
+  renderBoard(gBoard)
 }
 
 function checkGameOver() {
-  console.log('is game over??')
-  return false
+  var countMap = {
+    markedMines: 0,
+    shownMines: 0,
+    unShownCells: 0,
+  }
+
+  var allCells = getAllPoses()
+
+  for (var i = 0; i < allCells.length; i++) {
+    const pos = allCells[i]
+    // console.log(posI, posJ)
+    var currCell = gBoard[pos.i][pos.j]
+    if (currCell.isMarked && currCell.isMine) {
+      console.log('updating count')
+      countMap['markedMines']++
+    }
+    if (currCell.isMine && currCell.isShown) {
+      countMap['shownMines']++
+    }
+    if (!currCell.isShown && !currCell.isMarked) {
+      countMap['unShownCells']++
+    }
+  }
+
+  const { markedMines, shownMines, unShownCells } = countMap
+  console.log(countMap)
+  if (
+    (markedMines === gLevel.MINES && !unShownCells) ||
+    (shownMines + markedMines === gLevel.MINES && !unShownCells)
+  ) {
+    gameOver('You have Found all mines.\n Play agin?')
+  }
+
   // Game ends when all mines are marked, and all the other cells are shown
 }
+
 function getAllPoses() {
   var poses = []
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
+      // console.log(gBoard[i][j])
       poses.push({ i, j })
     }
   }
@@ -154,15 +169,31 @@ function setLevel(size, mines, level) {
   // Change the level of the game by changing the global variables
 }
 
-function gameOver() {
+function gameOver(msg) {
   var ElDialog = document.querySelector('.dialog')
+  ElDialog.querySelector('h1').innerText = msg || 'Not Good Enough, Try Again'
   gGame.isOn = false
   ElDialog.showModal()
+  resetGame()
 }
 
 function resetGame() {
-  initGame()
   // checkScore()
+  gGame = getInitialState()
+}
+
+function getInitialState() {
+  return {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+    isFirstClick: true,
+    firstClickPos: null,
+    poses: [],
+    lifeCount: 0,
+    level: 'Ez',
+  }
 }
 
 function checkScore() {
@@ -173,4 +204,15 @@ function checkScore() {
       level: gGame.level,
     }
   }
+}
+
+function startTimer() {
+  gGame.isOn = true
+  setInterval(renderTime, 1000)
+}
+function renderTime() {
+  gGame.secsPassed++
+
+  var ElTimer = document.querySelector('.timer-container .timer')
+  ElTimer.innerText = gGame.secsPassed
 }

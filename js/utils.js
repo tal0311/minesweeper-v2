@@ -1,5 +1,4 @@
 function renderBoard(board) {
-  console.log(board)
   var strHTML = '<table border="1"><tbody>'
   for (var i = 0; i < board.length; i++) {
     strHTML += `<tr>`
@@ -7,7 +6,7 @@ function renderBoard(board) {
       const className = getCellClass(board[i][j], i, j)
       // console.log(className)
       getCellContent(i, j)
-      strHTML += `<td  onclick= "cellClicked(this, ${i}, ${j})" oncontextmenu="cellMarked(event, ${i}, ${j})"
+      strHTML += `<td  onclick= "cellClicked(${i}, ${j})" oncontextmenu="cellMarked(event, ${i}, ${j})"
        class="${className}">${getCellContent(i, j)}</td>`
     }
     strHTML += '</tr>'
@@ -34,6 +33,7 @@ function getCellClass(cell, i, j) {
   classStr = `cell cell-${i}-${j} ${isMarked ? 'marked' : ''} ${
     isMine ? 'mine' : ''
   } ${isShown ? 'isShown' : ''}`
+
   return classStr
 }
 
