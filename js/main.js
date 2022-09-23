@@ -17,25 +17,25 @@ var gLevel = {
   MINES: 3,
 }
 
-var gGame = {
-  isOn: false,
-  shownCount: 0,
-  markedCount: 0,
-  secsPassed: 0,
-  isFirstClick: true,
-  firstClickPos: null,
-  poses: [],
-  lifeCount: 2,
-}
+var gGame
 
 function initGame() {
   // This is called when page loads
-  gBoard = buildBoard()
+  gGame = {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+    isFirstClick: true,
+    firstClickPos: null,
+    poses: [],
+    lifeCount: 0,
+    level: 'Ez',
+  }
 
+  gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
-
-  gGame.isOn = true
 }
 
 function setMinesNegsCount(board) {
@@ -44,9 +44,8 @@ function setMinesNegsCount(board) {
 
 function cellClicked(elCell, i, j) {
   // Called when a cell (td) is clicked
-
+  if (!gGame.isOn) startTimer()
   if (!gGame.isOn) return
-
   var cell = gBoard[i][j]
   if (cell.isShown) return
   if (gGame.isFirstClick) {
@@ -54,18 +53,32 @@ function cellClicked(elCell, i, j) {
   }
   if (cell.isMine) {
     if (gGame.lifeCount) {
-      gGame.lifeCount--
+      _updateCell('lives', i, j)
+      return
     }
     gameOver()
   }
+  // cell.isShown = true
 
   if (checkGameOver()) gameOver()
+  console.log('borad with mines:', gBoard)
   expandShown(i, j)
-  console.log(gBoard)
   renderBoard(gBoard)
 }
 
+function startTimer() {
+  gGame.isOn = true
+  setInterval(renderTime, 1000)
+}
+function renderTime() {
+  gGame.secsPassed++
+  console.log('gGame.secsPassed:', gGame.secsPassed)
+  var ElTimer = document.querySelector('.timer-container .timer')
+  ElTimer.innerText = gGame.secsPassed
+}
+
 function _updateCell(type, i, j) {
+  var cell = gBoard[i][j]
   switch (type) {
     case 'firstClick':
       gGame.isFirstClick = false
@@ -73,6 +86,10 @@ function _updateCell(type, i, j) {
       gGame.poses = getAllPoses()
       placeMines(gGame.poses)
       countNegs()
+      break
+    case 'lives':
+      gGame.lifeCount--
+      cell.isShown = true
       break
 
     default:
@@ -82,14 +99,6 @@ function _updateCell(type, i, j) {
 
 function cellMarked(ev, elCell) {
   ev.preventDefault()
-}
-
-function countNegs() {
-  for (var i = 0; i < gBoard.length; i++) {
-    for (var j = 0; j < gBoard.length; j++) {
-      gBoard[i][j].minesAroundCount = countMinesAround(i, j)
-    }
-  }
 }
 
 function checkGameOver() {
@@ -126,29 +135,42 @@ function placeMines(poses) {
 }
 
 function expandShown(i, j) {
-  var cell = gBoard[i][j]
-  cell.isShown = true
+  gBoard[i][j].isShown = true
   var negs = getAllNegs(i, j)
-  for (var i = 0; i < negs.length; i++) {
+  if (negs.length === 0) return
+  for (let i = 0; i < negs.length; i++) {
     var neg = negs[i]
-
-    if (!gBoard[neg.i][neg.j].isMine) {
-      gBoard[neg.i][neg.j].isShown = true
-      // gBoard[neg.i][neg.j]
-
-      // return expandShown(neg.i, neg.j)
-    }
+    var currCell = gBoard[neg.i][neg.j]
+    if (currCell.isMine) return
+    expandShown(neg.i, neg.j)
   }
-  // return cell
 }
 
-function setLevel(size, mines) {
+function setLevel(size, mines, level) {
   gLevel.SIZE = size
   gLevel.MINES = mines
+  gGame.level = level
   initGame()
   // Change the level of the game by changing the global variables
 }
 
 function gameOver() {
-  console.log('Game Over')
+  var ElDialog = document.querySelector('.dialog')
+  gGame.isOn = false
+  ElDialog.showModal()
+}
+
+function resetGame() {
+  initGame()
+  // checkScore()
+}
+
+function checkScore() {
+  const score = JSON.parse(localStorage.getItem('score'))
+  if (!score || score[gGame.level].highScore > gGame.secsPassed) {
+    const updatedScore = {
+      highScore: gGame.secsPassed,
+      level: gGame.level,
+    }
+  }
 }

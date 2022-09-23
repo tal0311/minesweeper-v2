@@ -11,9 +11,9 @@
     <header>
       <h1>mine sweeper</h1>
       <section class="level-container">
-        <button onclick="setLevel(4,2)">Ez</button>
-        <button onclick="setLevel(8,12)">Med</button>
-        <button onclick="setLevel(12,32)">Hd</button>
+        <button onclick="setLevel(4,2, 'Ez')">Ez</button>
+        <button onclick="setLevel(8,12,'Med')">Med</button>
+        <button onclick="setLevel(12,32,'Hd')">Hd</button>
       </section>
       <div class="info-container">
         <div class="timer-container">
@@ -29,6 +29,14 @@
     <main>
       <section class="board-container"></section>
     </main>
+
+    <dialog class="dialog">
+      <h1>Not Good Enough, Try Again</h1>
+      <form method="dialog">
+        <button onclick="resetGame()">Restart</button>
+      </form>
+    </dialog>
+
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
   </body>

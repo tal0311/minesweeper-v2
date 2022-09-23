@@ -5,7 +5,7 @@ function renderBoard(board) {
     strHTML += `<tr>`
     for (var j = 0; j < board[0].length; j++) {
       const className = getCellClass(board[i][j], i, j)
-      console.log(className)
+      // console.log(className)
       getCellContent(i, j)
       strHTML += `<td  onclick= "cellClicked(this, ${i}, ${j})" oncontextmenu="cellMarked(event, ${i}, ${j})"
        class="${className}">${getCellContent(i, j)}</td>`
@@ -38,10 +38,6 @@ function getCellClass(cell, i, j) {
 }
 
 function buildBoard() {
-  //  Builds the board
-  // Set mines at random locations
-  // Call setMinesNegsCount()
-  // Return the created board
   var board = []
   for (var i = 0; i < gLevel.SIZE; i++) {
     board[i] = []
@@ -89,11 +85,20 @@ function getAllNegs(posI, posJ) {
     for (var j = posJ - 1; j <= posJ + 1; j++) {
       if (j < 0 || j > gBoard[0].length - 1) continue
       if (i === posI && j === posJ) continue
-
-      negsPoses.push({ i, j })
+      if (!gBoard[i][j].isShown) {
+        negsPoses.push({ i, j })
+      }
     }
   }
   return negsPoses
+}
+
+function countNegs() {
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard.length; j++) {
+      gBoard[i][j].minesAroundCount = countMinesAround(i, j)
+    }
+  }
 }
 
 function getRandomInt(min, max) {

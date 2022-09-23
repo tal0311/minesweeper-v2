@@ -1,6 +1,10 @@
 * {
   box-sizing: border-box;
 }
+html {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
+}
 
 table {
   margin: 0 auto;
@@ -28,4 +32,23 @@ td.cell {
   text-align: center;
   box-shadow: inset 0px 0px 3px 2px;
   transition: all 0.3s ease-in-out;
+}
+
+.dialog {
+  border: none;
+  box-shadow: 1px 1px 13px 16px #c5b7b76c;
+  transition: 0.2s ease-in-out;
+}
+
+.dialog button {
+  background: none;
+  border: 1px solid #c5b7b7;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  transition: all 0.3s ease-in-out;
+}
+.dialog button:hover {
+  background: #c5b7b76c;
+  color: #333;
 }
