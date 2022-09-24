@@ -1,5 +1,5 @@
 function renderBoard(board) {
-  var strHTML = '<table border="1"><tbody>'
+  var strHTML = '<table ><tbody>'
   for (var i = 0; i < board.length; i++) {
     strHTML += `<tr>`
     for (var j = 0; j < board[0].length; j++) {

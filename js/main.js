@@ -11,19 +11,13 @@ var gLevel = {
 
 var gGame
 
-function initGame() {
-  gGame = {
-    isOn: false,
-    shownCount: 0,
-    markedCount: 0,
-    secsPassed: 0,
-    isFirstClick: true,
-    firstClickPos: null,
-    poses: [],
-    lifeCount: 0,
-    level: 'Ez',
-  }
-
+function initGame(lives = 2) {
+  gGame = getInitialState(lives)
+  document.querySelector('.timer').innerText = gGame.secsPassed
+  document.querySelector('.lives-counter').innerText = gGame.lifeCount
+  document.querySelector(
+    '.safe-click'
+  ).innerText = `Safe Click (${gGame.safeClick})`
   gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
@@ -84,6 +78,7 @@ function _updateCell(type, i, j) {
 }
 
 function checkGameOver() {
+  if (!gGame.isOn) return
   var countMap = {
     markedMines: 0,
     shownMines: 0,
@@ -161,41 +156,38 @@ function expandShown(i, j) {
   }
 }
 
-function setLevel(size, mines, level) {
+function setLevel(size, mines, level, lives) {
   gLevel.SIZE = size
   gLevel.MINES = mines
-  gGame.level = level
-  initGame()
+  initGame(lives, level)
   // Change the level of the game by changing the global variables
 }
 
-function gameOver(msg) {
-  var ElDialog = document.querySelector('.dialog')
-  ElDialog.querySelector('h1').innerText = msg || 'Not Good Enough, Try Again'
-  gGame.isOn = false
-  ElDialog.showModal()
-  resetGame()
-}
-
-function resetGame() {
-  // checkScore()
-  gGame = getInitialState()
-}
-
-function getInitialState() {
-  return {
-    isOn: false,
-    shownCount: 0,
-    markedCount: 0,
-    secsPassed: 0,
-    isFirstClick: true,
-    firstClickPos: null,
-    poses: [],
-    lifeCount: 0,
-    level: 'Ez',
+function showAllMines() {
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard.length; j++) {
+      if (gBoard[i][j].isMine) {
+        gBoard[i][j].isShown = true
+      }
+    }
   }
 }
 
+// BONUSES
+// safe-click
+function onSafeClick() {
+  var loc = getESafeLoc()
+  var elCell = document.querySelector(`.cell-${loc.i}-${loc.j}`)
+  elCell.classList.toggle('safe-click')
+  setTimeout(() => {
+    elCell.classList.toggle('safe-click')
+  }, 1000)
+
+  gGame.safeClick--
+  var elBtn = document.querySelector('button.safe-click')
+  if (!gGame.safeClick) elBtn.disabled = true
+  elBtn.innerText = `Safe Click (${gGame.safeClick})`
+}
 function checkScore() {
   const score = JSON.parse(localStorage.getItem('score'))
   if (!score || score[gGame.level].highScore > gGame.secsPassed) {
@@ -208,11 +200,53 @@ function checkScore() {
 
 function startTimer() {
   gGame.isOn = true
-  setInterval(renderTime, 1000)
+  gGame.timeInterval = setInterval(renderTime, 1000)
 }
+
 function renderTime() {
   gGame.secsPassed++
 
   var ElTimer = document.querySelector('.timer-container .timer')
   ElTimer.innerText = gGame.secsPassed
+}
+
+function getESafeLoc() {
+  var poses = getPosesForMines(gBoard)
+  for (var i = 0; i < poses.length; i++) {
+    var pos = poses[i]
+    var cell = gBoard[pos.i][pos.j]
+    if (!cell.isShown && !cell.isMine) {
+      return pos
+    }
+  }
+}
+function gameOver(msg) {
+  clearInterval(gGame.timeInterval)
+  var ElDialog = document.querySelector('.dialog')
+  ElDialog.querySelector('h1').innerText = msg || 'Not Good Enough, Try Again'
+  gGame.isOn = false
+  setTimeout(() => {
+    ElDialog.showModal()
+  }, 2000)
+  showAllMines()
+  renderBoard(gBoard)
+}
+function resetGame() {
+  // checkScore()
+  initGame()
+}
+function getInitialState(lifeCount, level = 'Ez') {
+  return {
+    isOn: false,
+    shownCount: 0,
+    markedCount: 0,
+    secsPassed: 0,
+    isFirstClick: true,
+    firstClickPos: null,
+    poses: [],
+    lifeCount,
+    level,
+    timeInterval: null,
+    safeClick: 3,
+  }
 }

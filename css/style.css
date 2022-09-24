@@ -52,3 +52,9 @@ td.cell {
   background: #c5b7b76c;
   color: #333;
 }
+dialog[open='true'] {
+  transition: all 0.3s ease-in-out;
+}
+.safe-click {
+  background: lightskyblue;
+}

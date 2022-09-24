@@ -11,11 +11,11 @@
     <header>
       <h1>mine sweeper</h1>
       <section class="level-container">
-        <button onclick="setLevel(4,2, 'Ez')">Ez</button>
-        <button onclick="setLevel(8,12,'Med')">Med</button>
-        <button onclick="setLevel(12,32,'Hd')">Hd</button>
+        <button onclick="setLevel(4,2, 'Ez',2)">Ez</button>
+        <button onclick="setLevel(8,12,'Med',3)">Med</button>
+        <button onclick="setLevel(12,32,'Hd',3)">Hd</button>
       </section>
-      <div class="info-container">
+      <section class="info-container">
         <div class="timer-container">
           <span>Time:</span>
           <span class="timer">0</span>
@@ -24,14 +24,17 @@
           <span>Lives:</span>
           <span class="lives-counter">3</span>
         </div>
-      </div>
+      </section>
     </header>
     <main>
       <section class="board-container"></section>
     </main>
 
+    <section class="actions-container">
+      <button class="safe-click" onclick="onSafeClick()">safe click</button>
+    </section>
     <dialog class="dialog">
-      <h1 class="end-game-msg">Not Good Enough, Try Again</h1>
+      <h1 class="end-game-msg"></h1>
       <form method="dialog">
         <button onclick="resetGame()">Restart</button>
       </form>
