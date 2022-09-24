@@ -1,15 +1,67 @@
 * {
   box-sizing: border-box;
 }
+
+body.dark {
+  --clr1: #c3c3c3;
+  --bg1: #333;
+  --bg2: #d55;
+  --bsClr: #c5b7b76c;
+  --SC-clr: lightskyblue;
+  background: var(--bg1);
+  color: var(--clr1);
+}
+body {
+  --bg1: #c3c3c3;
+  --clr1: #333;
+  --bg2: #d55;
+  --bsClr: #c5b7b76c;
+  --SC-clr: lightskyblue;
+  background: var(--bg1);
+  color: var(--clr);
+}
 html {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
     'Lucida Sans', Arial, sans-serif;
 }
 
+button {
+  transition: 0.2s ease-in-out;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--clr1);
+  border: 1px solid var(--clr1);
+  margin: 0 1em;
+  padding: 0 2em;
+  border-radius: 0.8em;
+}
+button:hover {
+  background: var(--clr1);
+  color: var(--bg1);
+}
+header {
+  padding: 1em;
+}
+.header-container.flex {
+  justify-content: space-between;
+  padding: 1em;
+  font-size: 1.5rem;
+}
+.header-container > * {
+  flex: 1;
+  justify-content: end;
+}
+
+.level-container {
+  justify-content: center;
+}
+.level-container button {
+}
 table {
   margin: 0 auto;
-  width: 75vw;
-  height: 75vh;
+  width: 100%;
+  height: 70vh;
 }
 
 tr,
@@ -18,14 +70,18 @@ td {
   width: 5%;
 }
 
+td span {
+  color: var(--bg1);
+}
+
 .isShown {
-  background: #c3c3c3;
+  background: var(--clr1);
 }
 .mark {
   box-shadow: inset 0px 0px 20px 3px;
 }
 .mine.isShown {
-  background: #d55;
+  background: var(--bg2);
 }
 
 td.cell {
@@ -36,7 +92,7 @@ td.cell {
 
 .dialog {
   border: none;
-  box-shadow: 1px 1px 13px 16px #c5b7b76c;
+  box-shadow: 1px 1px 13px 16px var(--bsClr);
   transition: 0.2s ease-in-out;
 }
 
@@ -49,12 +105,50 @@ td.cell {
   transition: all 0.3s ease-in-out;
 }
 .dialog button:hover {
-  background: #c5b7b76c;
-  color: #333;
+  background: var(--bsClr);
+  color: var(--bg1);
 }
 dialog[open='true'] {
   transition: all 0.3s ease-in-out;
 }
 .safe-click {
-  background: lightskyblue;
+  background: var(--SC-clr);
+}
+
+.user-msg {
+  transition: all 0.3s ease-in-out;
+  transform: translateX(200%);
+  position: fixed;
+  top: 1rem;
+  right: 2rem;
+  z-index: 1000;
+  background: var(--bg1);
+  color: var(--clr1);
+  padding: 0 2rem;
+  border-radius: 1em;
+  opacity: 0;
+}
+
+.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+.mode {
+  transition: 0.7s ease-in-out;
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+}
+.main-layout {
+  margin: 0 auto;
+  width: 75vw;
+}
+
+.actions-container {
+  padding: 1rem 0;
+}
+.actions-container button {
+  padding: 1em 1.2em;
 }

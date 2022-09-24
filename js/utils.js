@@ -7,7 +7,7 @@ function renderBoard(board) {
       // console.log(className)
       getCellContent(i, j)
       strHTML += `<td  onclick= "cellClicked(${i}, ${j})" oncontextmenu="cellMarked(event, ${i}, ${j})"
-       class="${className}">${getCellContent(i, j)}</td>`
+       class="${className}"> <span>${getCellContent(i, j)}</span> </td>`
     }
     strHTML += '</tr>'
   }
@@ -76,21 +76,6 @@ function countMinesAround(posI, posJ) {
   }
 
   return count
-}
-
-function getAllNegsInclusive(posI, posJ) {
-  var negsPoses = []
-  for (var i = posI - 1; i <= posI + 1; i++) {
-    if (i < 0 || i > gBoard.length - 1) continue
-    for (var j = posJ - 1; j <= posJ + 1; j++) {
-      if (j < 0 || j > gBoard[0].length - 1) continue
-
-      if (!gBoard[i][j].isShown) {
-        negsPoses.push({ i, j })
-      }
-    }
-  }
-  return negsPoses
 }
 
 function getAllNegs(posI, posJ) {

@@ -2,29 +2,21 @@
 
 const MINE = '💣'
 const FLAG = '🚩'
-
 var gBoard
 var gLevel = {
   SIZE: 4,
   MINES: 3,
 }
-
 var gGame
 
 function initGame(lives = 2) {
   gGame = getInitialState(lives)
-  document.querySelector('.timer').innerText = gGame.secsPassed
-  document.querySelector('.lives-counter').innerText = gGame.lifeCount
-  document.querySelector(
-    '.safe-click'
-  ).innerText = `Safe Click (${gGame.safeClick})`
-  document.querySelector('button.hints').innerText = `Hints (${gGame.hints})`
-
+  renderUserInfo()
+  renderViewMode()
   gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
 }
-
 function cellClicked(i, j) {
   if (!gGame.isOn) startTimer()
   if (!gGame.isOn) return
@@ -46,14 +38,11 @@ function cellClicked(i, j) {
   }
   _updateCell('show-cell', i, j)
 }
-
 function cellMarked(ev, i, j) {
   ev.preventDefault()
-  console.log(i, j)
   _updateCell('mark', i, j)
-  renderBoard(gBoard)
+  // renderBoard(gBoard)
 }
-
 function _updateCell(type, i, j) {
   // debugger
   var cell = gBoard[i][j]
@@ -68,8 +57,13 @@ function _updateCell(type, i, j) {
     case 'lives':
       gGame.lifeCount--
       cell.isShown = true
+      document.querySelector('.lives-counter').innerText = gGame.lifeCount
       break
     case 'mark':
+      gGame.markedCount++
+      cell.isMarked = !cell.isMarked
+      document.querySelector('.flags-counter').innerText = gGame.markedCount
+      break
     case 'hint':
       onHint(i, j)
       return
@@ -82,7 +76,6 @@ function _updateCell(type, i, j) {
   checkGameOver()
   renderBoard(gBoard)
 }
-
 function checkGameOver() {
   if (!gGame.isOn) return
   var countMap = {
@@ -120,7 +113,6 @@ function checkGameOver() {
 
   // Game ends when all mines are marked, and all the other cells are shown
 }
-
 function getAllPoses() {
   var poses = []
   for (var i = 0; i < gBoard.length; i++) {
@@ -131,12 +123,12 @@ function getAllPoses() {
   }
   return poses
 }
-
 function placeMines(poses) {
   var minesToPlace = []
   for (var k = 0; k < gLevel.MINES; k++) {
-    var idx = getRandomInt(0, poses.length)
+    var idx = getRandomInt(0, poses.length - 1)
     var pos = poses.splice(idx, 1)[0]
+    console.log('pos' + k, pos)
     if (pos.i && pos.j === gGame.firstClickPos.i && gGame.firstClickPos.j) {
       placeMines(poses)
       return
@@ -149,7 +141,6 @@ function placeMines(poses) {
     gBoard[mine.i][mine.j].isMine = true
   }
 }
-
 function expandShown(i, j) {
   gBoard[i][j].isShown = true
   var negs = getAllNegs(i, j)
@@ -161,14 +152,12 @@ function expandShown(i, j) {
     expandShown(neg.i, neg.j)
   }
 }
-
 function setLevel(size, mines, level, lives) {
   gLevel.SIZE = size
   gLevel.MINES = mines
   initGame(lives, level)
   // Change the level of the game by changing the global variables
 }
-
 function showAllMines() {
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
@@ -178,7 +167,6 @@ function showAllMines() {
     }
   }
 }
-
 // BONUSES
 // safe-click
 function onSafeClick() {
@@ -194,26 +182,34 @@ function onSafeClick() {
   if (!gGame.safeClick) elBtn.disabled = true
   elBtn.innerText = `Safe Click (${gGame.safeClick})`
 }
-
 // hint mode
 function setHintMode() {
   gGame.isHintOn = !gGame.isHintOn
-  elHint = document.querySelector('.hints').innerText
+  var elBtn = document.querySelector('button.hints')
+  if (!gGame.hints) elBtn.disabled = true
+  elBtn.innerText = `Hints (${gGame.hints})`
+  setUserMsg('Click any cell to get the hint')
 }
 
+function setMode() {
+  gGame.isDark = !gGame.isDark
+  renderViewMode()
+}
+function renderViewMode() {
+  var strHtml = `<i class="fa-regular fa-${gGame.isDark ? 'moon' : 'sun'}"></i>`
+  const elIcon = document.querySelector('.mode')
+  document.querySelector('body').classList.toggle('dark')
+  elIcon.innerHTML = strHtml
+}
 function onHint(i, j) {
   var negs = getAllNegs(i, j)
   toggleNegs(negs, i, j)
   setTimeout(() => {
     toggleNegs(negs, i, j)
+    setHintMode()
   }, 2000)
   gGame.hints--
-  var elBtn = document.querySelector('button.hints')
-  if (!gGame.hints) elBtn.disabled = true
-  elBtn.innerText = `Safe Click (${gGame.hints})`
-  setHintMode()
 }
-
 function toggleNegs(negs, cellI, cellJ) {
   for (var i = 0; i < negs.length; i++) {
     var pos = negs[i]
@@ -223,7 +219,6 @@ function toggleNegs(negs, cellI, cellJ) {
   }
   document.querySelector(`.cell-${cellI}-${cellJ}`).classList.toggle('isShown')
 }
-
 function checkScore() {
   const score = JSON.parse(localStorage.getItem('score'))
   if (!score || score[gGame.level].highScore > gGame.secsPassed) {
@@ -233,19 +228,25 @@ function checkScore() {
     }
   }
 }
-
 function startTimer() {
   gGame.isOn = true
   gGame.timeInterval = setInterval(renderTime, 1000)
 }
-
 function renderTime() {
   gGame.secsPassed++
 
   var ElTimer = document.querySelector('.timer-container .timer')
   ElTimer.innerText = gGame.secsPassed
 }
-
+function renderUserInfo() {
+  document.querySelector('.timer').innerText = gGame.secsPassed
+  document.querySelector('.lives-counter').innerText = gGame.lifeCount
+  document.querySelector(
+    '.safe-click'
+  ).innerText = `Safe Click (${gGame.safeClick})`
+  document.querySelector('button.hints').innerText = `Hints (${gGame.hints})`
+  document.querySelector('.flags-counter').innerText = gGame.markedCount
+}
 function getESafeLoc() {
   var poses = getPosesForMines(gBoard)
   for (var i = 0; i < poses.length; i++) {
@@ -286,5 +287,17 @@ function getInitialState(lifeCount, level = 'Ez', hints = 3) {
     safeClick: 3,
     isHintOn: false,
     hints,
+    isDark: false,
   }
+}
+
+function setUserMsg(msg) {
+  const elUserMsg = document.querySelector('.user-msg')
+  document.querySelector('.user-msg-text').innerText = msg
+  elUserMsg.classList.toggle('show')
+  if (!msg) return
+
+  setTimeout(() => {
+    setUserMsg()
+  }, 3000)
 }
