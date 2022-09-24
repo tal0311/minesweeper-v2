@@ -18,6 +18,8 @@ function initGame(lives = 2) {
   document.querySelector(
     '.safe-click'
   ).innerText = `Safe Click (${gGame.safeClick})`
+  document.querySelector('button.hints').innerText = `Hints (${gGame.hints})`
+
   gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
@@ -26,6 +28,10 @@ function initGame(lives = 2) {
 function cellClicked(i, j) {
   if (!gGame.isOn) startTimer()
   if (!gGame.isOn) return
+  if (gGame.isHintOn) {
+    _updateCell('hint', i, j)
+    return
+  }
   var cell = gBoard[i][j]
   if (cell.isShown) return
   if (gGame.isFirstClick) {
@@ -64,9 +70,9 @@ function _updateCell(type, i, j) {
       cell.isShown = true
       break
     case 'mark':
-      gGame.markedCount++
-      cell.isMarked = !cell.isMarked
-      break
+    case 'hint':
+      onHint(i, j)
+      return
 
     default:
       expandShown(i, j)
@@ -188,6 +194,36 @@ function onSafeClick() {
   if (!gGame.safeClick) elBtn.disabled = true
   elBtn.innerText = `Safe Click (${gGame.safeClick})`
 }
+
+// hint mode
+function setHintMode() {
+  gGame.isHintOn = !gGame.isHintOn
+  elHint = document.querySelector('.hints').innerText
+}
+
+function onHint(i, j) {
+  var negs = getAllNegs(i, j)
+  toggleNegs(negs, i, j)
+  setTimeout(() => {
+    toggleNegs(negs, i, j)
+  }, 2000)
+  gGame.hints--
+  var elBtn = document.querySelector('button.hints')
+  if (!gGame.hints) elBtn.disabled = true
+  elBtn.innerText = `Safe Click (${gGame.hints})`
+  setHintMode()
+}
+
+function toggleNegs(negs, cellI, cellJ) {
+  for (var i = 0; i < negs.length; i++) {
+    var pos = negs[i]
+    document
+      .querySelector(`.cell-${pos.i}-${pos.j}`)
+      .classList.toggle('isShown')
+  }
+  document.querySelector(`.cell-${cellI}-${cellJ}`).classList.toggle('isShown')
+}
+
 function checkScore() {
   const score = JSON.parse(localStorage.getItem('score'))
   if (!score || score[gGame.level].highScore > gGame.secsPassed) {
@@ -235,7 +271,7 @@ function resetGame() {
   // checkScore()
   initGame()
 }
-function getInitialState(lifeCount, level = 'Ez') {
+function getInitialState(lifeCount, level = 'Ez', hints = 3) {
   return {
     isOn: false,
     shownCount: 0,
@@ -248,5 +284,7 @@ function getInitialState(lifeCount, level = 'Ez') {
     level,
     timeInterval: null,
     safeClick: 3,
+    isHintOn: false,
+    hints,
   }
 }
