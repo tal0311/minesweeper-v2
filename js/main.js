@@ -188,7 +188,7 @@ function setHintMode() {
   var elBtn = document.querySelector('button.hints')
   if (!gGame.hints) elBtn.disabled = true
   elBtn.innerText = `Hints (${gGame.hints})`
-  setUserMsg('Click any cell to get the hint')
+  gGame.isHintOn && setUserMsg('Click any cell to get the hint')
 }
 
 function setMode() {
@@ -298,6 +298,6 @@ function setUserMsg(msg) {
   if (!msg) return
 
   setTimeout(() => {
-    setUserMsg()
+    setUserMsg(null)
   }, 3000)
 }

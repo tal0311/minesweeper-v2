@@ -18,8 +18,8 @@
     <header>
       <h1 class="main-layout">Mine sweeper V2</h1>
 
+      <section class="mode" onclick="setMode()"></section>
       <section class="header-container main-layout flex">
-        <section class="mode" onclick="setMode()"></section>
         <section class="level-container flex">
           <button onclick="setLevel(4,2, 'Ez',2)">Easy</button>
           <button onclick="setLevel(8,12,'Med',3)">Medium</button>
@@ -47,7 +47,7 @@
 
     <section class="actions-container main-layout">
       <button class="safe-click" onclick="onSafeClick()">safe click</button>
-      <button class="hints" onclick="setHintMode()">Hints</button>
+      <button id="hints" class="hints" onclick="setHintMode()">Hints</button>
     </section>
     <dialog class="dialog">
       <h1 class="end-game-msg"></h1>
@@ -57,7 +57,7 @@
     </dialog>
 
     <section class="user-msg">
-      <h2 class="user-msg-text">user msg</h2>
+      <h4 class="user-msg-text">user msg</h4>
     </section>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>

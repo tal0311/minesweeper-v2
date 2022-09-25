@@ -54,9 +54,11 @@ header {
 }
 
 .level-container {
-  justify-content: center;
+  justify-content: start;
 }
-.level-container button {
+
+.info-container > * {
+  margin-inline-end: 1em;
 }
 table {
   margin: 0 auto;
@@ -92,7 +94,7 @@ td.cell {
 
 .dialog {
   border: none;
-  box-shadow: 1px 1px 13px 16px var(--bsClr);
+  box-shadow: 1px 1px 13px 100vh var(--bsClr);
   transition: 0.2s ease-in-out;
 }
 
@@ -119,7 +121,7 @@ dialog[open='true'] {
   transition: all 0.3s ease-in-out;
   transform: translateX(200%);
   position: fixed;
-  top: 1rem;
+  bottom: 1rem;
   right: 2rem;
   z-index: 1000;
   background: var(--bg1);
@@ -136,6 +138,10 @@ dialog[open='true'] {
 .mode {
   transition: 0.7s ease-in-out;
   cursor: pointer;
+  font-size: 2em;
+  position: fixed;
+  right: 2rem;
+  top: 2rem;
 }
 
 .flex {
