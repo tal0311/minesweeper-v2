@@ -193,7 +193,6 @@ function setHintMode() {
   elBtn.innerText = `Hints (${gGame.hints})`
   gGame.isHintOn && setUserMsg('Click any cell to get the hint')
 }
-
 function setMode() {
   gGame.isDark = !gGame.isDark
   renderViewMode()
@@ -230,7 +229,6 @@ function checkScore() {
     setUserMsg('you have got a new best score')
   }
 }
-
 function loadScores() {
   const score = JSON.parse(localStorage.getItem('score'))
   if (!score || !score[gGame.level]) {
