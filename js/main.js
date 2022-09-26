@@ -11,6 +11,7 @@ var gGame
 
 function initGame(lives = 2) {
   gGame = getInitialState(lives)
+  loadScores()
   renderUserInfo()
   renderViewMode()
   gBoard = buildBoard()
@@ -109,6 +110,7 @@ function checkGameOver() {
     (shownMines + markedMines === gLevel.MINES && !unShownCells)
   ) {
     gameOver('You have Found all mines.\n Play agin?')
+    checkScore()
   }
 
   // Game ends when all mines are marked, and all the other cells are shown
@@ -162,6 +164,7 @@ function showAllMines() {
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
       if (gBoard[i][j].isMine) {
+        gBoard[i][j].isMarked = false
         gBoard[i][j].isShown = true
       }
     }
@@ -221,12 +224,20 @@ function toggleNegs(negs, cellI, cellJ) {
 }
 function checkScore() {
   const score = JSON.parse(localStorage.getItem('score'))
-  if (!score || score[gGame.level].highScore > gGame.secsPassed) {
-    const updatedScore = {
-      highScore: gGame.secsPassed,
-      level: gGame.level,
-    }
+  if (!score || score[gGame.level] > gGame.secsPassed) {
+    score[gGame.level] = gGame.secsPassed
+    localStorage.setItem('score', JSON.stringify(score))
+    setUserMsg('you have got a new best score')
   }
+}
+
+function loadScores() {
+  const score = JSON.parse(localStorage.getItem('score'))
+  if (!score || !score[gGame.level]) {
+    setUserMsg('No high score for this level yet')
+    return
+  }
+  setUserMsg(`high score for this level is ${score[gGame.level]}sec`)
 }
 function startTimer() {
   gGame.isOn = true
