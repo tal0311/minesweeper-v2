@@ -9,11 +9,11 @@ var gLevel = {
 }
 var gGame
 
-function initGame(lives = 2) {
-  gGame = getInitialState(lives)
+function initGame(lives = 2, level = 'Ez') {
+  gGame = getInitialState(lives, level)
   loadScores()
   renderUserInfo()
-  renderViewMode()
+  renderViewMode()``
   gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
@@ -222,8 +222,9 @@ function toggleNegs(negs, cellI, cellJ) {
   document.querySelector(`.cell-${cellI}-${cellJ}`).classList.toggle('isShown')
 }
 function checkScore() {
-  const score = JSON.parse(localStorage.getItem('score'))
-  if (!score || score[gGame.level] > gGame.secsPassed) {
+  debugger
+  const score = JSON.parse(localStorage.getItem('score')) || {}
+  if (!score[gGame.level] || score[gGame.level] > gGame.secsPassed) {
     score[gGame.level] = gGame.secsPassed
     localStorage.setItem('score', JSON.stringify(score))
     setUserMsg('you have got a new best score')
