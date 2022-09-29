@@ -6,7 +6,8 @@ function renderBoard(board) {
       const className = getCellClass(board[i][j], i, j)
       // console.log(className)
       getCellContent(i, j)
-      strHTML += `<td  onclick= "cellClicked(${i}, ${j})" oncontextmenu="cellMarked(event, ${i}, ${j})"
+      strHTML += `<td  onclick= "cellClicked(${i}, ${j})"
+       oncontextmenu="cellMarked(event, ${i}, ${j})"
        class="${className}"> <span>${getCellContent(i, j)}</span> </td>`
     }
     strHTML += '</tr>'

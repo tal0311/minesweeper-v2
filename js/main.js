@@ -13,7 +13,7 @@ function initGame(lives = 2, level = 'Ez') {
   gGame = getInitialState(lives, level)
   loadScores()
   renderUserInfo()
-  renderViewMode()``
+  renderViewMode()
   gBoard = buildBoard()
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
