@@ -18,6 +18,7 @@ function initGame(lives = 2, level = 'Ez') {
   renderBoard(gBoard)
   gGame.poses = getPosesForMines(gBoard)
 }
+
 function cellClicked(i, j) {
   if (!gGame.isOn) startTimer()
   if (!gGame.isOn) return
@@ -39,13 +40,13 @@ function cellClicked(i, j) {
   }
   _updateCell('show-cell', i, j)
 }
+
 function cellMarked(ev, i, j) {
   ev.preventDefault()
   _updateCell('mark', i, j)
-  // renderBoard(gBoard)
 }
+
 function _updateCell(type, i, j) {
-  // debugger
   var cell = gBoard[i][j]
   switch (type) {
     case 'firstClick':
@@ -58,12 +59,12 @@ function _updateCell(type, i, j) {
     case 'lives':
       gGame.lifeCount--
       cell.isShown = true
-      document.querySelector('.lives-counter').innerText = gGame.lifeCount
+      renderInnerTxt('.lives-counter', gGame.lifeCount)
       break
     case 'mark':
       gGame.markedCount++
       cell.isMarked = !cell.isMarked
-      document.querySelector('.flags-counter').innerText = gGame.markedCount
+      renderInnerTxt('.flags-counter', gGame.markedCount)
       break
     case 'hint':
       onHint(i, j)
@@ -77,6 +78,7 @@ function _updateCell(type, i, j) {
   checkGameOver()
   renderBoard(gBoard)
 }
+
 function checkGameOver() {
   if (!gGame.isOn) return
   var countMap = {
@@ -84,9 +86,7 @@ function checkGameOver() {
     shownMines: 0,
     unShownCells: 0,
   }
-
   var allCells = getAllPoses()
-
   for (var i = 0; i < allCells.length; i++) {
     const pos = allCells[i]
     // console.log(posI, posJ)
@@ -102,7 +102,6 @@ function checkGameOver() {
       countMap['unShownCells']++
     }
   }
-
   const { markedMines, shownMines, unShownCells } = countMap
   console.log(countMap)
   if (
@@ -115,6 +114,7 @@ function checkGameOver() {
 
   // Game ends when all mines are marked, and all the other cells are shown
 }
+
 function getAllPoses() {
   var poses = []
   for (var i = 0; i < gBoard.length; i++) {
@@ -125,12 +125,12 @@ function getAllPoses() {
   }
   return poses
 }
+
 function placeMines(poses) {
   var minesToPlace = []
   for (var k = 0; k < gLevel.MINES; k++) {
     var idx = getRandomInt(0, poses.length - 1)
     var pos = poses.splice(idx, 1)[0]
-    console.log('pos' + k, pos)
     if (pos.i && pos.j === gGame.firstClickPos.i && gGame.firstClickPos.j) {
       placeMines(poses)
       return
@@ -143,6 +143,7 @@ function placeMines(poses) {
     gBoard[mine.i][mine.j].isMine = true
   }
 }
+
 function expandShown(i, j) {
   gBoard[i][j].isShown = true
   var negs = getAllNegs(i, j)
@@ -154,12 +155,13 @@ function expandShown(i, j) {
     expandShown(neg.i, neg.j)
   }
 }
+
 function setLevel(size, mines, level, lives) {
   gLevel.SIZE = size
   gLevel.MINES = mines
   initGame(lives, level)
-  // Change the level of the game by changing the global variables
 }
+
 function showAllMines() {
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
@@ -193,16 +195,19 @@ function setHintMode() {
   elBtn.innerText = `Hints (${gGame.hints})`
   gGame.isHintOn && setUserMsg('Click any cell to get the hint')
 }
+
 function setMode() {
   gGame.isDark = !gGame.isDark
   renderViewMode()
 }
+
 function renderViewMode() {
   var strHtml = `<i class="fa-regular fa-${gGame.isDark ? 'moon' : 'sun'}"></i>`
   const elIcon = document.querySelector('.mode')
   document.querySelector('body').classList.toggle('dark')
   elIcon.innerHTML = strHtml
 }
+
 function onHint(i, j) {
   var negs = getAllNegs(i, j)
   toggleNegs(negs, i, j)
@@ -212,6 +217,7 @@ function onHint(i, j) {
   }, 2000)
   gGame.hints--
 }
+
 function toggleNegs(negs, cellI, cellJ) {
   for (var i = 0; i < negs.length; i++) {
     var pos = negs[i]
@@ -221,8 +227,8 @@ function toggleNegs(negs, cellI, cellJ) {
   }
   document.querySelector(`.cell-${cellI}-${cellJ}`).classList.toggle('isShown')
 }
+
 function checkScore() {
-  debugger
   const score = JSON.parse(localStorage.getItem('score')) || {}
   if (!score[gGame.level] || score[gGame.level] > gGame.secsPassed) {
     score[gGame.level] = gGame.secsPassed
@@ -230,6 +236,7 @@ function checkScore() {
     setUserMsg('you have got a new best score')
   }
 }
+
 function loadScores() {
   const score = JSON.parse(localStorage.getItem('score'))
   if (!score || !score[gGame.level]) {
@@ -238,13 +245,14 @@ function loadScores() {
   }
   setUserMsg(`high score for this level is ${score[gGame.level]}sec`)
 }
+
 function startTimer() {
   gGame.isOn = true
   gGame.timeInterval = setInterval(renderTime, 1000)
 }
+
 function renderTime() {
   gGame.secsPassed++
-
   var ElTimer = document.querySelector('.timer-container .timer')
   ElTimer.innerText = gGame.secsPassed
 }
@@ -257,6 +265,7 @@ function renderUserInfo() {
   document.querySelector('button.hints').innerText = `Hints (${gGame.hints})`
   document.querySelector('.flags-counter').innerText = gGame.markedCount
 }
+
 function getESafeLoc() {
   var poses = getPosesForMines(gBoard)
   for (var i = 0; i < poses.length; i++) {
@@ -267,6 +276,7 @@ function getESafeLoc() {
     }
   }
 }
+
 function gameOver(msg) {
   clearInterval(gGame.timeInterval)
   var ElDialog = document.querySelector('.dialog')
@@ -278,10 +288,12 @@ function gameOver(msg) {
   showAllMines()
   renderBoard(gBoard)
 }
+
 function resetGame() {
   // checkScore()
   initGame()
 }
+
 function getInitialState(lifeCount, level = 'Ez', hints = 3) {
   return {
     isOn: false,

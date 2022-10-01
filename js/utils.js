@@ -1,5 +1,5 @@
 function renderBoard(board) {
-  var strHTML = '<table ><tbody>'
+  var strHTML = '<table><tbody>'
   for (var i = 0; i < board.length; i++) {
     strHTML += `<tr>`
     for (var j = 0; j < board[0].length; j++) {
@@ -18,6 +18,10 @@ function renderBoard(board) {
   container.innerHTML = strHTML
 }
 
+function renderInnerTxt(selector, value) {
+  document.querySelector(selector).innerText = value
+}
+
 function getCellContent(i, j) {
   var cell = gBoard[i][j]
   if (cell.isShown) {
@@ -34,7 +38,6 @@ function getCellClass(cell, i, j) {
   classStr = `cell cell-${i}-${j} ${isMarked ? 'marked' : ''} ${
     isMine ? 'mine' : ''
   } ${isShown ? 'isShown' : ''}`
-
   return classStr
 }
 
@@ -75,7 +78,6 @@ function countMinesAround(posI, posJ) {
       if (isMine) count++
     }
   }
-
   return count
 }
 
@@ -105,5 +107,5 @@ function countNegs() {
 function getRandomInt(min, max) {
   min = Math.ceil(min)
   max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min) + min)
 }
