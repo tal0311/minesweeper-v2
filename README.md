@@ -9,6 +9,7 @@ A game inspired by the classic game Minesweeper.
 The project was built using vanilla JS.
 and CSS.
 
+#  code snippet
 The code snippet before you shows the recursive opening of cells when clicking on a cell that has no neighbors.
 ```
 function expandShown(i, j) {
