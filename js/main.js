@@ -183,16 +183,15 @@ function onSafeClick() {
   }, 1000)
 
   gGame.safeClick--
-  var elBtn = document.querySelector('button.safe-click')
   if (!gGame.safeClick) elBtn.disabled = true
-  elBtn.innerText = `Safe Click (${gGame.safeClick})`
+  renderInnerTxt('button.safe-click', `Safe Click (${gGame.safeClick})`)
 }
 // hint mode
 function setHintMode() {
   gGame.isHintOn = !gGame.isHintOn
   var elBtn = document.querySelector('button.hints')
   if (!gGame.hints) elBtn.disabled = true
-  elBtn.innerText = `Hints (${gGame.hints})`
+  renderInnerTxt('button.hints', `Hints (${gGame.hints})`)
   gGame.isHintOn && setUserMsg('Click any cell to get the hint')
 }
 
@@ -253,17 +252,14 @@ function startTimer() {
 
 function renderTime() {
   gGame.secsPassed++
-  var ElTimer = document.querySelector('.timer-container .timer')
-  ElTimer.innerText = gGame.secsPassed
+  renderInnerTxt('.timer-container .timer', gGame.secsPassed)
 }
 function renderUserInfo() {
-  document.querySelector('.timer').innerText = gGame.secsPassed
-  document.querySelector('.lives-counter').innerText = gGame.lifeCount
-  document.querySelector(
-    '.safe-click'
-  ).innerText = `Safe Click (${gGame.safeClick})`
-  document.querySelector('button.hints').innerText = `Hints (${gGame.hints})`
-  document.querySelector('.flags-counter').innerText = gGame.markedCount
+  renderInnerTxt('.timer', gGame.secsPassed)
+  renderInnerTxt('.lives-counter', gGame.lifeCount)
+  renderInnerTxt('.safe-click', `Safe Click (${gGame.safeClick})`)
+  renderInnerTxt('button.hints', `Hints (${gGame.hints})`)
+  renderInnerTxt('.flags-counter', gGame.markedCount)
 }
 
 function getESafeLoc() {
