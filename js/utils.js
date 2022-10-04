@@ -4,7 +4,6 @@ function renderBoard(board) {
     strHTML += `<tr>`
     for (var j = 0; j < board[0].length; j++) {
       const className = getCellClass(board[i][j], i, j)
-      // console.log(className)
       getCellContent(i, j)
       strHTML += `<td  onclick= "cellClicked(${i}, ${j})"
        oncontextmenu="cellMarked(event, ${i}, ${j})"
@@ -33,6 +32,7 @@ function getCellContent(i, j) {
   }
   return ''
 }
+
 function getCellClass(cell, i, j) {
   const { isMarked, isMine, isShown } = cell
   classStr = `cell cell-${i}-${j} ${isMarked ? 'marked' : ''} ${

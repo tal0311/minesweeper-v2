@@ -89,10 +89,9 @@ function checkGameOver() {
   var allCells = getAllPoses()
   for (var i = 0; i < allCells.length; i++) {
     const pos = allCells[i]
-    // console.log(posI, posJ)
+
     var currCell = gBoard[pos.i][pos.j]
     if (currCell.isMarked && currCell.isMine) {
-      console.log('updating count')
       countMap['markedMines']++
     }
     if (currCell.isMine && currCell.isShown) {
@@ -103,7 +102,7 @@ function checkGameOver() {
     }
   }
   const { markedMines, shownMines, unShownCells } = countMap
-  console.log(countMap)
+
   if (
     (markedMines === gLevel.MINES && !unShownCells) ||
     (shownMines + markedMines === gLevel.MINES && !unShownCells)
@@ -119,7 +118,6 @@ function getAllPoses() {
   var poses = []
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
-      // console.log(gBoard[i][j])
       poses.push({ i, j })
     }
   }
@@ -275,18 +273,18 @@ function getESafeLoc() {
 
 function gameOver(msg) {
   clearInterval(gGame.timeInterval)
-  var ElDialog = document.querySelector('.dialog')
-  ElDialog.querySelector('h1').innerText = msg || 'Not Good Enough, Try Again'
+  const ElDialog = document.querySelector('.dialog')
+  renderInnerTxt('.end-game-msg', msg || 'Not Good Enough, Try Again')
   gGame.isOn = false
   setTimeout(() => {
     ElDialog.showModal()
-  }, 2000)
+  }, 500)
   showAllMines()
   renderBoard(gBoard)
 }
 
 function resetGame() {
-  // checkScore()
+  checkScore()
   initGame()
 }
 
@@ -311,7 +309,7 @@ function getInitialState(lifeCount, level = 'Ez', hints = 3) {
 
 function setUserMsg(msg) {
   const elUserMsg = document.querySelector('.user-msg')
-  document.querySelector('.user-msg-text').innerText = msg
+  renderInnerTxt('.user-msg-text', msg)
   elUserMsg.classList.toggle('show')
   if (!msg) return
 
